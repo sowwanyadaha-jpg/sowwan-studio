@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <meta name="theme-color" content="#05070A">
+  <title>Sowwan Studio | Cloud Video Editor Version 4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;600;700&family=Kanit:wght@300;400;500;700&family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/editor-style.css">
+</head>
+<body>
+  <div id="auth-screen" class="auth-screen hidden">
+    <div class="auth-card glass-panel">
+      <div class="brand-mark">▶</div>
+      <h1>Sowwan Studio</h1>
+      <p class="muted">เข้าสู่ระบบเพื่อให้โปรเจกต์ แทร็ก และ temp/autosave เป็นของผู้ใช้แต่ละคน</p>
+      <div class="auth-tabs">
+        <button id="tab-login" class="active">เข้าสู่ระบบ</button>
+        <button id="tab-register">สมัครบัญชี</button>
+      </div>
+      <form id="auth-form" class="auth-form">
+        <label>ชื่อ <input id="auth-name" autocomplete="name" placeholder="ชื่อของคุณ"></label>
+        <label>อีเมล <input id="auth-email" type="email" autocomplete="email" required placeholder="you@sowwanstudio.site"></label>
+        <label>รหัสผ่าน <input id="auth-password" type="password" autocomplete="current-password" required placeholder="อย่างน้อย 6 ตัวอักษร"></label>
+        <button class="primary wide" type="submit" id="auth-submit">เข้าสู่ระบบ</button>
+        <div id="auth-error" class="form-error"></div>
+      </form>
+      <p class="hint">เมื่อนำขึ้นเว็บจริงให้ตั้งค่า cookie domain เป็น <code>.sowwanstudio.site</code> เพื่อให้ลิงก์กับหน้าเว็บหลักได้</p>
+    </div>
+  </div>
+
+  <main id="app" class="app hidden">
+    <header class="topbar">
+      <div class="top-left">
+        <div class="brand-mini"><span>▶</span></div>
+        <div>
+          <div class="brand-title">Sowwan <b>Studio Pro</b> <span class="tiny">Version 4</span></div>
+          <div id="save-status" class="save-status">กำลังโหลดโปรเจกต์...</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="btn-new-project" class="soft">+ โปรเจกต์</button>
+        <button id="btn-drive" class="soft">Drive</button>
+        <label class="soft upload-label">Upload<input id="file-input" type="file" multiple accept="video/*,image/*,audio/*"></label>
+        <select id="preview-quality" class="select-small" title="Preview quality">
+          <option value="auto">Auto</option>
+          <option value="144p">144p</option>
+          <option value="240p">240p</option>
+          <option value="360p">360p</option>
+          <option value="480p">480p</option>
+          <option value="720p">720p</option>
+          <option value="original">Original</option>
+        </select>
+        <button id="btn-export" class="primary">Export</button>
+        <button id="btn-logout" class="ghost">ออก</button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <aside class="toolrail" aria-label="Tools">
+        <button class="tool active" data-tool="select" title="เลือก">↖</button>
+        <button id="tool-razor" class="tool" data-tool="razor" title="กรรไกรตัดคลิป">✂</button>
+        <button id="tool-text" class="tool" title="เพิ่มข้อความ">T</button>
+        <button id="tool-add-video-track" class="tool" title="เพิ่มแทร็กภาพ">V+</button>
+        <button id="tool-add-audio-track" class="tool" title="เพิ่มแทร็กเสียง">A+</button>
+        <button id="tool-settings" class="tool" title="ตั้งค่าโปรเจกต์">⚙</button>
+      </aside>
+
+      <aside class="asset-panel glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>คลังสื่อ</h2>
+            <span id="asset-count">0 assets</span>
+          </div>
+          <button id="btn-add-selected-asset" class="mini-btn">ใส่ลงไทม์ไลน์</button>
+        </div>
+        <div id="asset-list" class="asset-list"></div>
+      </aside>
+
+      <section class="center-stage">
+        <div class="preview-toolbar glass-panel">
+          <div class="time-readout" id="time-readout">00:00:00:00</div>
+          <div class="play-controls">
+            <button id="btn-prev-frame" class="transport">−1f</button>
+            <button id="btn-back" class="transport">‹</button>
+            <button id="btn-play" class="play-button">▶</button>
+            <button id="btn-forward" class="transport">›</button>
+            <button id="btn-next-frame" class="transport">+1f</button>
+          </div>
+          <div class="preview-flags">
+            <button id="btn-fit" class="mini-btn">Fit</button>
+            <button id="btn-edit-selected" class="mini-btn">แก้ไขเลเยอร์</button>
+          </div>
+        </div>
+
+        <div class="preview-wrap">
+          <div id="preview-stage" class="preview-stage" tabindex="0">
+            <div id="preview-bg" class="preview-bg"></div>
+            <div id="preview-layers" class="preview-layers"></div>
+            <div id="preview-empty" class="preview-empty">Preview Monitor</div>
+          </div>
+        </div>
+
+        <section class="timeline-panel glass-panel">
+          <div class="timeline-toolbar">
+            <div class="timeline-left-actions">
+              <button id="btn-split" class="danger-soft">✂ ตัดที่หัวอ่าน</button>
+              <button id="btn-delete" class="soft">ลบคลิป</button>
+              <button id="btn-duplicate" class="soft">Duplicate</button>
+            </div>
+            <div class="timeline-right-actions">
+              <label>Zoom <input id="timeline-zoom" type="range" min="40" max="220" value="90"></label>
+              <span id="project-duration" class="tiny">00:00</span>
+            </div>
+          </div>
+          <div class="timeline-shell" id="timeline-shell">
+            <div id="track-labels" class="track-labels"></div>
+            <div id="timeline-scroll" class="timeline-scroll">
+              <div id="timeline-canvas" class="timeline-canvas">
+                <div id="ruler" class="ruler"></div>
+                <div id="playhead" class="playhead"><span></span></div>
+                <div id="track-rows" class="track-rows"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <aside id="quick-inspector" class="inspector glass-panel">
+        <div class="panel-head">
+          <div>
+            <h2>Inspector</h2>
+            <span id="selected-name">ยังไม่ได้เลือกคลิป</span>
+          </div>
+          <button id="btn-open-pro-editor" class="mini-btn">Pro</button>
+        </div>
+        <div id="quick-inspector-body" class="inspector-body"></div>
+      </aside>
+    </section>
+  </main>
+
+  <div id="pro-editor" class="modal hidden">
+    <div class="modal-panel pro-panel">
+      <div class="modal-header">
+        <button id="btn-close-pro" class="ghost">⌄ ปิด</button>
+        <strong id="pro-title">Layer Editor</strong>
+        <div class="modal-actions">
+          <button id="btn-add-keyframe" class="mini-btn">◆ Keyframe</button>
+          <button id="btn-reset-clip" class="mini-btn">Reset</button>
+        </div>
+      </div>
+      <div class="pro-body">
+        <div class="pro-preview-wrap">
+          <div id="pro-preview-stage" class="pro-preview-stage">
+            <div id="pro-box" class="pro-box">
+              <div id="pro-box-content" class="pro-box-content"></div>
+              <span class="handle nw"></span><span class="handle ne"></span><span class="handle sw"></span><span class="handle se"></span>
+              <span class="handle n"></span><span class="handle s"></span><span class="handle e"></span><span class="handle w"></span>
+            </div>
+          </div>
+        </div>
+        <div class="pro-inspector">
+          <div class="tabs">
+            <button class="tab active" data-tab="transform">Frame</button>
+            <button class="tab" data-tab="text">Text</button>
+            <button class="tab" data-tab="color">Color/FX</button>
+            <button class="tab" data-tab="transition">Transition</button>
+          </div>
+          <div id="pro-tab-content" class="pro-tab-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-panel settings-panel">
+      <div class="modal-header">
+        <strong>Current Project Settings</strong>
+        <button id="btn-close-settings" class="ghost">ปิด</button>
+      </div>
+      <div class="settings-grid">
+        <label>ชื่อโปรเจกต์ <input id="set-name"></label>
+        <label>Frame Rate <select id="set-fps"><option>24</option><option selected>30</option><option>60</option></select></label>
+        <label>Aspect Ratio <select id="set-aspect"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:5</option><option>21:9</option></select></label>
+        <label>Background <input id="set-bg" type="color" value="#05070A"></label>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="export-modal" class="modal hidden">
+    <div class="modal-panel settings-panel export-panel">
+      <div class="modal-header">
+        <strong>Export / Render · Version 4</strong>
+        <button id="btn-close-export" class="ghost">ปิด</button>
+      </div>
+      <div class="export-grid">
+        <button id="btn-export-free" class="export-option">
+          <b>ฟรี 480p</b>
+          <span>มีลายน้ำ Sowwan Studio เหมาะทดสอบ/พรีวิว</span>
+          <em>0 เครดิต</em>
+        </button>
+        <button id="btn-export-720" class="export-option">
+          <b>HD 720p</b>
+          <span>ไม่มีลายน้ำ ไฟล์เบา</span>
+          <em>2 เครดิต</em>
+        </button>
+        <button id="btn-export-1080" class="export-option recommended">
+          <b>Full HD 1080p</b>
+          <span>ไม่มีลายน้ำ เหมาะลง Reels/TikTok/YouTube</span>
+          <em>5 เครดิต</em>
+        </button>
+      </div>
+      <p id="export-credit-line" class="hint"></p>
+      <a href="/#credits" class="mini-btn">เติมเครดิต / ดูประวัติ</a>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/drive-picker.js"></script>
+  <script src="/editor-app.js"></script>
+</body>
+</html>

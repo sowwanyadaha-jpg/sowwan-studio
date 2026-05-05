@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05070A">
+  <title>Sowwan Studio | Media Platform v4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;600;700;800&family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div><div class="grid-bg"></div>
+
+  <header class="site-nav glass">
+    <a href="#home" class="brand" aria-label="Sowwan Studio Home">
+      <span class="brand-icon logo-box"><img src="/assets/logo-mark.jpg" alt="Sowwan Studio logo"></span>
+      <span><b>Sowwan Studio</b><small>Media Platform v4</small></span>
+    </a>
+    <nav class="nav-links" id="nav-links">
+      <a href="#services">บริการ</a>
+      <a href="#marketplace">หาคนตัดต่อ</a>
+      <a href="#ai">AI Studio</a>
+      <a href="#sponsors">Sponsor Hub</a>
+      <a href="/editor.html">Cloud Editor</a>
+      <a href="#credits">เครดิต</a>
+    </nav>
+    <div class="nav-actions" id="nav-actions">
+      <button class="ghost" id="btn-open-chat" title="แชท">แชท</button>
+      <button class="soft" id="btn-login">เข้าสู่ระบบ</button>
+      <button class="primary" id="btn-register">สมัครฟรี</button>
+    </div>
+    <button class="mobile-menu" id="mobile-menu">☰</button>
+  </header>
+
+  <main id="page"></main>
+
+  <footer class="site-footer">
+    <div><b>Sowwan Studio</b><span>Cloud editor · creator marketplace · AI media · sponsor hub</span></div>
+    <a href="https://www.facebook.com/sowwandokya" target="_blank" rel="noreferrer">Facebook Support</a>
+  </footer>
+
+  <div id="auth-modal" class="modal hidden">
+    <div class="modal-card auth-card glass">
+      <button class="modal-close" data-close-auth>×</button>
+      <div class="brand-icon big logo-box"><img src="/assets/logo-mark.jpg" alt="Sowwan Studio logo"></div>
+      <h2 id="auth-title">เข้าสู่ระบบ</h2>
+      <p class="muted">บัญชีเดียวใช้ได้ทั้งเว็บหลัก, Cloud Editor, marketplace, credit และแชท</p>
+      <div class="auth-tabs"><button id="auth-login-tab" class="active">เข้าสู่ระบบ</button><button id="auth-register-tab">สมัครบัญชี</button></div>
+      <form id="auth-form" class="form-stack">
+        <label class="register-only">ชื่อที่แสดง<input name="name" autocomplete="name" placeholder="เช่น Sowwan Studio"></label>
+        <label>อีเมล<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+        <label>รหัสผ่าน<input name="password" type="password" autocomplete="current-password" required placeholder="อย่างน้อย 6 ตัวอักษร"></label>
+        <button class="primary wide" type="submit" id="auth-submit">เข้าสู่ระบบ</button>
+        <div class="form-error" id="auth-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <aside id="chat-panel" class="chat-panel glass hidden">
+    <div class="chat-head"><b>Sowwan Chat</b><button id="chat-close">×</button></div>
+    <div id="chat-auth-hint" class="chat-hint">เข้าสู่ระบบก่อนใช้แชท</div>
+    <div id="chat-body" class="chat-body hidden">
+      <div class="friend-search"><input id="friend-query" placeholder="ค้นหาอีเมล/ชื่อเพื่อน"><button id="friend-search-btn">ค้นหา</button></div>
+      <div id="friend-results" class="friend-results"></div>
+      <div id="friend-list" class="friend-list"></div>
+      <div class="chat-window">
+        <div id="chat-target" class="chat-target">เลือกเพื่อนเพื่อเริ่มคุย</div>
+        <div id="chat-messages" class="chat-messages"></div>
+        <form id="chat-form" class="chat-form"><input id="chat-input" placeholder="พิมพ์ข้อความ..."><button>ส่ง</button></form>
+      </div>
+    </div>
+  </aside>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
