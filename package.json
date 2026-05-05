@@ -1,15 +1,11 @@
 {
-  "name": "sowwan-studio-platform-v4",
-  "version": "4.0.0",
-  "private": true,
-  "description": "Pure Node.js media platform: landing, login, admin, credits, marketplace, AI connector, sponsor hub, chat, cloud editor.",
+  "name": "sowwan-studio",
+  "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "seed:admin": "node scripts/seed-admin.js",
-    "check": "node --check server.js && node --check public/app.js && node --check public/editor-app.js && node --check lib/platform-store.js && node --check lib/ai-provider.js"
+    "start": "node server.js"
   },
-  "dependencies": {},
-  "engines": { "node": ">=18" }
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
